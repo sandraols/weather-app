@@ -89,4 +89,10 @@ export default {
   right: -30%;
   z-index: -1;
 }
+@media screen and (max-width: 590px) {
+  .input {
+    position: relative;
+    z-index: 1;
+  }
+}
 </style>

@@ -23,7 +23,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .weather-info-container {
   display: flex;
   flex-direction: column;
@@ -32,14 +31,12 @@ export default {
   height: fit-content;
   padding: 10px;
 }
-
 .text {
   font-family: "Roboto", sans-serif;
   color: #3f3f3f;
   font-size: 14px;
 }
-
 .icon {
-    max-width: 60px;
+  max-width: 60px;
 }
 </style>

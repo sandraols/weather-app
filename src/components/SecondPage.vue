@@ -27,14 +27,16 @@
       <div class="bottom__content">
         <div class="column" v-bind:key="dayObject.date" v-for="dayObject in forecasts">
           <h2 class="bottom__title">{{getDay(dayObject.date)}}</h2>
-          <template v-for="weather in dayObject.hourlyForecasts">
-            <weather-info
-              v-bind:key="weather.dt_txt"
-              :time="weather.dt_txt" 
-              :icon="weather.weather[0].icon" 
-              :temperature="weather.main.temp"
-            />
-          </template>
+          <div class="weather__info">
+            <template v-for="weather in dayObject.hourlyForecasts">
+              <weather-info
+                v-bind:key="weather.dt_txt"
+                :time="weather.dt_txt" 
+                :icon="weather.weather[0].icon" 
+                :temperature="weather.main.temp"
+              />
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -42,7 +44,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import SecondPageCurrentWeather from "./SecondPageCurrentWeather.vue";
 import WeatherInfo from "./WeatherInfo.vue"
 export default {
@@ -128,11 +130,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 .top {
   height: 60vh;
   width: 100vw;
@@ -142,7 +139,6 @@ export default {
   background: linear-gradient(180deg, #83a5ff 0%, #ffdffc 100%);
   overflow: hidden;
 }
-
 .top__header {
   display: flex;
   flex-direction: row;
@@ -152,12 +148,10 @@ export default {
   height: 14vh;
   margin-bottom: 12px;
 }
-
 .main__title--small {
   font-size: 24px;
   font-weight: 300;
 }
-
 .sun--small {
   width: 200px;
   height: 200px;
@@ -169,42 +163,80 @@ export default {
     rgba(255, 160, 160, 0) 67.08%
   );
 }
-
-// .column {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-// }
-
 .bottom {
   display: flex;
   justify-content: center;
-  padding: 10px;
+  // padding: 10px;
   margin-top: 50px;
 }
-
 .bottom__content {
   width: 80vw;
   min-height: 50vh;
   padding: 20px 0;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4vh;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #3f3f3f;
   // align-items: center;
 }
-
-// .column--bottom {
-//   // justify-content: space-around;
-//   height: 80%;
-// }
-
 .bottom__title {
   font-family: "Roboto", sans-serif;
   color: #3f3f3f;
   font-size: 18px;
-  margin-bottom: 30px;
+  // margin-bottom: 30px;
+  margin-bottom: 14px;
   padding-bottom: 8px;
+  width: fit-content;
 }
-.column:first-of-type .bottom__title {
-  border-bottom: 2px solid #3f3f3f;
+.weather__info {
+  display: flex;
+  margin-left: -3.5vw;
+  // flex-direction: column;
+}
+// .column:first-of-type .bottom__title {
+//   border-bottom: 2px solid #3f3f3f;
+//   margin-bottom: 20px;
+// }
+@media screen and (max-width: 590px) {
+  .top {
+    height: 100vh;
+  }
+  .top__header {
+    flex-direction: column;
+    padding-top: 24px;
+    height: 30vh;
+    position: relative;
+    z-index: 1;
+  }
+  .bottom__content {
+    flex-direction: column;
+  }
+  .column {
+    flex-direction: column;
+    align-items: flex-start;
+    // margin-bottom: 4vh;
+    // padding-bottom: 16px;
+    // border-bottom: 2px solid #3f3f3f;
+  }
+  .weather__info {
+    margin-left: -12px;
+  }
+  .bottom__title {
+    margin-bottom: 8px;
+  }
+}
+@media only screen 
+and (min-device-width : 414px) 
+and (max-device-width : 736px) { 
+  .top__header {
+    height: 23vh;
+  }
 }
 </style>
