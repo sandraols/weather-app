@@ -1,6 +1,9 @@
 <template>
   <section class="second__page">
-    <div class="top">
+    <div
+      ref="topDiv"
+      class="top"
+    >
       <!-- <input type="checkbox" v-model="showCurrent"> -->
       <div class="top__header">
         <h2 class="main__title main__title--small">
@@ -17,31 +20,21 @@
           placeholder="How's the weather in..."
         >
       </div>
-      <second-page-current-weather v-if="showCurrent" :currentWeather="currentWeather" />
+      <second-page-current-weather v-if="showCurrent" :currentWeather="currentWeather"/>
+
     </div>
     <div class="bottom">
       <div class="bottom__content">
-        <div class="column column--bottom">
-          <p class="bottom__title">Today</p>
-
-          <p class="bottom__paragraph"></p>
-          <img v-bind:src="`http://openweathermap.org/img/wn/` + currentWeather.icon + `@2x.png`"/>
-          <!-- <div v-for="item in newArray" :key="item.id">
-                            {{item}}
-          </div>-->
-          <p class="bottom__temperature">temperature</p>
-        </div>
-        <div class="column column--bottom">
-          <p class="bottom__title">Tomorrow</p>
-        </div>
-        <div class="column column--bottom">
-          <p class="bottom__title">Sunday</p>
-        </div>
-        <div class="column column--bottom">
-          <p class="bottom__title">Monday</p>
-        </div>
-        <div class="column column--bottom">
-          <p class="bottom__title">Tuesday</p>
+        <div class="column" v-bind:key="dayObject.date" v-for="dayObject in forecasts">
+          <h2 class="bottom__title">{{getDay(dayObject.date)}}</h2>
+          <template v-for="weather in dayObject.hourlyForecasts">
+            <weather-info
+              v-bind:key="weather.dt_txt"
+              :time="weather.dt_txt" 
+              :icon="weather.weather[0].icon" 
+              :temperature="weather.main.temp"
+            />
+          </template>
         </div>
       </div>
     </div>
@@ -49,22 +42,32 @@
 </template>
 
 <script>
+import axios from 'axios';
 import SecondPageCurrentWeather from "./SecondPageCurrentWeather.vue";
+import WeatherInfo from "./WeatherInfo.vue"
 export default {
   name: "SecondPage",
   props: {
     weather: Object,
-    city: String,
+    city: String
   },
   data() {
     return {
       showCurrent: true,
       showHourly: true,
-      showDaily: true,
+      showDaily: true
     };
   },
   computed: {
     currentWeather() {
+      // axios
+      // .get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=61b1bca9c0906f64bf48a4bf1c04e906`)
+      // .then(response => {
+      //   this.weather = response.data;
+      //   this.gotWeather = true;
+      //   this.city = '';
+      //   console.log(this.response.data);
+      // })
       return {
         city: this.weather.city.name,
         mainWeather: this.weather.list[0].weather[0].main,
@@ -75,24 +78,69 @@ export default {
         feelsLike: this.weather.list[0].main.feels_like,
         humidity: this.weather.list[0].main.humidity,
         wind: this.weather.list[0].wind.speed,
-        icon: this.weather.list[0].weather[0].icon
+        icon: this.weather.list[0].weather[0].icon,
+        showTime: this.weather.list[0].dt_txt,
+      };
+    },
+    forecasts() {
+      let forecasts = [];
+      const allHourlyForecasts = this.weather.list; // All data from weather.list
+      const indexOfTomorrow = allHourlyForecasts.findIndex(hourlyForecast => hourlyForecast.dt_txt.substring(0, 10) !== allHourlyForecasts[0].dt_txt.substring(0, 10)); // the index where tomorrow starts
+       // All data from weather.list from index 0 to index of tomorrow = todays forecast
+      
+      // loop five times, one for each day
+      for (let i = 0; i < 5; i++) {
+        if (i === 0) { //if first day, date is today and hours are based of indexOfTmorrow
+          forecasts.push({
+            date: 'Today',
+            hourlyForecasts: allHourlyForecasts.splice(0, indexOfTomorrow)
+          })
+        } else {
+          forecasts.push({
+            date: new Date(allHourlyForecasts[0].dt_txt).getDay(),
+            hourlyForecasts: allHourlyForecasts.splice(0, 8)
+          })
+        }
       }
+      return forecasts;
+    }
+  },
+  methods: {
+    getDay(d) {
+        if (d === 'Today') {
+          return 'Today'
+        }
+        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        let day = days[d];
+        return day;
     }
   },
   components: {
-    SecondPageCurrentWeather
+    SecondPageCurrentWeather,
+    WeatherInfo,
+  },
+  filters: {
+    subStr: function(string) {
+      return string.substring(16, 11);
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .top {
-  height: 50vh;
+  height: 60vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: linear-gradient(180deg, #83a5ff 0%, #ffdffc 100%);
+  overflow: hidden;
 }
 
 .top__header {
@@ -122,34 +170,41 @@ export default {
   );
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+// .column {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+// }
 
 .bottom {
   display: flex;
   justify-content: center;
   padding: 10px;
+  margin-top: 50px;
 }
 
 .bottom__content {
   width: 80vw;
   min-height: 50vh;
+  padding: 20px 0;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  // align-items: center;
 }
 
-.column--bottom {
-  // justify-content: space-around;
-  height: 80%;
-}
+// .column--bottom {
+//   // justify-content: space-around;
+//   height: 80%;
+// }
 
 .bottom__title {
   font-family: "Roboto", sans-serif;
   color: #3f3f3f;
-  font-size: 14px;
+  font-size: 18px;
+  margin-bottom: 30px;
+  padding-bottom: 8px;
+}
+.column:first-of-type .bottom__title {
+  border-bottom: 2px solid #3f3f3f;
 }
 </style>

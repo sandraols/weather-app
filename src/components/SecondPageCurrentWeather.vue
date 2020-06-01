@@ -32,19 +32,19 @@ export default {
 <style lang="scss" scoped>
 .top__content {
   width: 80vw;
-  margin-top: 50px;
+  margin-top: 70px;
 }
 
 .title__city {
   font-family: "Rubik", sans-serif;
-  font-size: 48px;
+  font-size: 56px;
   color: white;
   margin-bottom: 20px;
 }
 
 .weather__info {
   height: 74px;
-  width: 70vw;
+  max-width: 500px;
   display: flex;
   justify-content: space-between;
 }
@@ -78,5 +78,22 @@ export default {
   font-size: 16px;
   color: white;
   margin-bottom: 8px;
+}
+@media screen and (max-width: 590px) {
+  .weather__info {
+    flex-direction: column;
+  }
+  .weather__paragraph {
+    width: 25vw;
+  }
+  .column {
+    flex-direction: row;
+  }
+  .column:nth-last-of-type(2) {
+    // justify-content: space-between;
+  }
+  .main__weather {
+    margin-right: 24px;
+  }
 }
 </style>

@@ -21,13 +21,12 @@ export default {
   },
   methods: {
     getWeather() {
-      console.log('getWeather')
       axios
       .get(`https://api.openweathermap.org/data/2.5/forecast?q=${this.city}&units=metric&appid=75d52df782aadd749ed253cf966cb823`)
       .then(response => {
         this.weather = response.data;
         this.gotWeather = true;
-        console.log(this.weather)
+        this.city = '';
       })
     }
   },
