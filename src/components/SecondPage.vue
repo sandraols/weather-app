@@ -24,7 +24,6 @@
         <div
           class="column"
           v-bind:key="dayObject.date"
-          v-if="dayObject.hourlyForecasts.length > 1"
           v-for="dayObject in forecasts"
         >
           <h2 class="bottom__title">{{getDay(dayObject.date)}}</h2>
@@ -88,10 +87,13 @@ export default {
       for (let i = 0; i < 5; i++) {
         if (i === 0) {
           // if first day, date is today and hours are based of indexOfTmorrow
-          forecasts.push({
-            date: "Today",
-            hourlyForecasts: allHourlyForecasts.splice(0, indexOfTomorrow)
-          });
+          const hourlyForecasts = allHourlyForecasts.splice(0, indexOfTomorrow);
+          if (hourlyForecasts.length > 1) {
+            forecasts.push({
+              date: "Today",
+              hourlyForecasts: hourlyForecasts
+            });
+          }
         } else {
           forecasts.push({
             date: new Date(allHourlyForecasts[0].dt_txt).getDay(),
@@ -105,22 +107,16 @@ export default {
       switch (this.currentWeather.mainWeather) {
         case "Clear":
           return "clear-sky"
-          break;
         case "Clouds":
           return "clouds"
-          break;
         case "Rain":
           return "rain"
-          break;
         case "Thunderstorm":
           return 'thunderstorm'
-          break;
         case "Snow":
           return 'snow'
-          break;
         case "Mist":
           return 'mist'
-          break;
         default:
           return 'clear-sky'
       }
@@ -211,7 +207,6 @@ export default {
 .bottom {
   display: flex;
   justify-content: center;
-  // padding: 10px;
   margin-top: 50px;
 }
 .bottom__content {
@@ -229,13 +224,11 @@ export default {
   margin-bottom: 4vh;
   padding-bottom: 16px;
   border-bottom: 2px solid #3f3f3f;
-  // align-items: center;
 }
 .bottom__title {
   font-family: "Roboto", sans-serif;
   color: #3f3f3f;
   font-size: 18px;
-  // margin-bottom: 30px;
   margin-bottom: 14px;
   padding-bottom: 8px;
   width: fit-content;
@@ -243,12 +236,7 @@ export default {
 .weather__info {
   display: flex;
   margin-left: -3.5vw;
-  // flex-direction: column;
 }
-// .column:first-of-type .bottom__title {
-//   border-bottom: 2px solid #3f3f3f;
-//   margin-bottom: 20px;
-// }
 @media screen and (max-width: 590px) {
   .top {
     height: 100vh;
@@ -266,9 +254,6 @@ export default {
   .column {
     flex-direction: column;
     align-items: flex-start;
-    // margin-bottom: 4vh;
-    // padding-bottom: 16px;
-    // border-bottom: 2px solid #3f3f3f;
   }
   .weather__info {
     margin-left: -12px;

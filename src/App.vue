@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FirstPage v-if="!gotWeather" :city="city" @input="city = $event" @getWeather="getWeather()"></FirstPage>
+    <FirstPage v-if="!gotWeather" v-bind:city="city" v-on:input="city = $event" v-on:getWeather="getWeather()"></FirstPage>
     <SecondPage v-else :weather="weather" :city="city" @input="city = $event" @getWeather="getWeather()"></SecondPage>
   </div>
 </template>
