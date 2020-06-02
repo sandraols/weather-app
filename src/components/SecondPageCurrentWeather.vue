@@ -3,8 +3,11 @@
     <h2 class="title__city">{{currentWeather.city}}</h2>
     <div class="weather__info">
       <div class="column">
-        <p
-          class="main__weather">{{currentWeather.mainWeather}} <br><span class="description__weather">{{currentWeather.descriptionWeather}}</span></p>
+        <p class="main__weather">
+          {{currentWeather.mainWeather}}
+          <br>
+          <span class="description__weather">{{currentWeather.descriptionWeather}}</span>
+        </p>
         <p class="temperature">{{Math.round(currentWeather.temperature)}}˚C</p>
       </div>
       <div class="weather__info--columns">
@@ -92,7 +95,7 @@ export default {
 }
 @media screen and (max-width: 590px) {
   .top__content {
-    margin-top: 20vh;
+    margin-top: 14vh;
   }
   .weather__info {
     flex-direction: column;
@@ -107,7 +110,7 @@ export default {
     flex-direction: column;
   }
   .weather__info--columns .column:nth-of-type(1) {
-  flex-direction: column;
+    flex-direction: column;
   }
   .weather__info--columns {
     display: flex;
@@ -116,6 +119,31 @@ export default {
   .main__weather {
     margin-right: 24px;
     margin-bottom: 38px;
+  }
+}
+@media screen and (max-width: 414px) {
+  .title__city {
+    font-size: 36px;
+  }
+  .main__weather {
+    font-size: 20px;
+  }
+  .temperature {
+    font-size: 20px;
+  }
+  .weather__info .column:first-of-type {
+    width: 57vw;
+    justify-content: space-between;
+  }
+  .weather__info--columns {
+    // width: 70vw;
+    width: 77vw;
+  }
+  .column {
+    margin-right: 0;
+  }
+  .weather__paragraph {
+    width: 30vw;
   }
 }
 </style>

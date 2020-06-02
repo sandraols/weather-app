@@ -38,8 +38,8 @@ export default {
 </script>
 
 <style lang="scss">
-$header-font: "Rubik", sans-serif;
-$paragraph-font: "Roboto", sans-serif;
+// $header-font: "Rubik", sans-serif;
+// $paragraph-font: "Roboto", sans-serif;
 
 * {
   margin: 0;

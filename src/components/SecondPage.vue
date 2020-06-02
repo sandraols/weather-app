@@ -1,9 +1,6 @@
 <template>
   <section class="second__page">
-    <div
-      ref="topDiv"
-      class="top"
-    >
+    <div ref="topDiv" class="top" v-bind:class="backgroundClass">
       <!-- <input type="checkbox" v-model="showCurrent"> -->
       <div class="top__header">
         <h2 class="main__title main__title--small">
@@ -20,19 +17,23 @@
           placeholder="How's the weather in..."
         >
       </div>
-      <second-page-current-weather v-if="showCurrent" :currentWeather="currentWeather"/>
-
+      <second-page-current-weather :currentWeather="currentWeather"/>
     </div>
     <div class="bottom">
       <div class="bottom__content">
-        <div class="column" v-bind:key="dayObject.date" v-for="dayObject in forecasts">
+        <div
+          class="column"
+          v-bind:key="dayObject.date"
+          v-if="dayObject.hourlyForecasts.length > 1"
+          v-for="dayObject in forecasts"
+        >
           <h2 class="bottom__title">{{getDay(dayObject.date)}}</h2>
           <div class="weather__info">
             <template v-for="weather in dayObject.hourlyForecasts">
               <weather-info
                 v-bind:key="weather.dt_txt"
-                :time="weather.dt_txt" 
-                :icon="weather.weather[0].icon" 
+                :time="weather.dt_txt"
+                :icon="weather.weather[0].icon"
                 :temperature="weather.main.temp"
               />
             </template>
@@ -44,32 +45,19 @@
 </template>
 
 <script>
-// import axios from 'axios';
 import SecondPageCurrentWeather from "./SecondPageCurrentWeather.vue";
-import WeatherInfo from "./WeatherInfo.vue"
+import WeatherInfo from "./WeatherInfo.vue";
 export default {
   name: "SecondPage",
   props: {
     weather: Object,
     city: String
   },
-  data() {
-    return {
-      showCurrent: true,
-      showHourly: true,
-      showDaily: true
-    };
-  },
   computed: {
+    nameLength(){
+      return this.name.length;
+    },
     currentWeather() {
-      // axios
-      // .get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=61b1bca9c0906f64bf48a4bf1c04e906`)
-      // .then(response => {
-      //   this.weather = response.data;
-      //   this.gotWeather = true;
-      //   this.city = '';
-      //   console.log(this.response.data);
-      // })
       return {
         city: this.weather.city.name,
         mainWeather: this.weather.list[0].weather[0].main,
@@ -81,45 +69,84 @@ export default {
         humidity: this.weather.list[0].main.humidity,
         wind: this.weather.list[0].wind.speed,
         icon: this.weather.list[0].weather[0].icon,
-        showTime: this.weather.list[0].dt_txt,
+        showTime: this.weather.list[0].dt_txt
       };
     },
     forecasts() {
       let forecasts = [];
-      const allHourlyForecasts = this.weather.list; // All data from weather.list
-      const indexOfTomorrow = allHourlyForecasts.findIndex(hourlyForecast => hourlyForecast.dt_txt.substring(0, 10) !== allHourlyForecasts[0].dt_txt.substring(0, 10)); // the index where tomorrow starts
-       // All data from weather.list from index 0 to index of tomorrow = todays forecast
-      
+      // All data from weather.list in a new shallow copy
+      const allHourlyForecasts = Array.from(this.weather.list);
+      // the index of where tomorrow starts
+      const indexOfTomorrow = allHourlyForecasts.findIndex(
+        hourlyForecast =>
+          hourlyForecast.dt_txt.substring(0, 10) !==
+          allHourlyForecasts[0].dt_txt.substring(0, 10)
+      );
+      // All data from weather.list from index 0 to index of tomorrow = todays forecast
+
       // loop five times, one for each day
       for (let i = 0; i < 5; i++) {
-        if (i === 0) { //if first day, date is today and hours are based of indexOfTmorrow
+        if (i === 0) {
+          // if first day, date is today and hours are based of indexOfTmorrow
           forecasts.push({
-            date: 'Today',
+            date: "Today",
             hourlyForecasts: allHourlyForecasts.splice(0, indexOfTomorrow)
-          })
+          });
         } else {
           forecasts.push({
             date: new Date(allHourlyForecasts[0].dt_txt).getDay(),
             hourlyForecasts: allHourlyForecasts.splice(0, 8)
-          })
+          });
         }
       }
       return forecasts;
-    }
+    },
+    backgroundClass() {
+      switch (this.currentWeather.mainWeather) {
+        case "Clear":
+          return "clear-sky"
+          break;
+        case "Clouds":
+          return "clouds"
+          break;
+        case "Rain":
+          return "rain"
+          break;
+        case "Thunderstorm":
+          return 'thunderstorm'
+          break;
+        case "Snow":
+          return 'snow'
+          break;
+        case "Mist":
+          return 'mist'
+          break;
+        default:
+          return 'clear-sky'
+      }
+    },
   },
   methods: {
     getDay(d) {
-        if (d === 'Today') {
-          return 'Today'
-        }
-        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        let day = days[d];
-        return day;
-    }
+      if (d === "Today") {
+        return "Today";
+      }
+      let days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ];
+      let day = days[d];
+      return day;
+    },
   },
   components: {
     SecondPageCurrentWeather,
-    WeatherInfo,
+    WeatherInfo
   },
   filters: {
     subStr: function(string) {
@@ -131,13 +158,31 @@ export default {
 
 <style lang="scss" scoped>
 .top {
-  height: 60vh;
+  height: 70vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: linear-gradient(180deg, #83a5ff 0%, #ffdffc 100%);
   overflow: hidden;
+}
+.clear-sky {
+  background: linear-gradient(180deg, #83a5ff 0%, #ffdffc 100%);
+}
+.clouds {
+  background: linear-gradient(180deg, #a3b4de 0%, #e8b9e1 100%);
+}
+.rain {
+  background: linear-gradient(180deg, #35383f 0%, #d9e1ea 100%);
+}
+.thunderstorm {
+  background: linear-gradient(180deg, #402450 0%, #65707d 100%);
+}
+.snow {
+    background: linear-gradient(180deg, #a9ccff 0%, #b4deff 100%);
+}
+.mist {
+ background: linear-gradient(180deg, #b7b7b7 0%, #bfcddd 100%);
 }
 .top__header {
   display: flex;
@@ -227,14 +272,18 @@ export default {
   }
   .weather__info {
     margin-left: -12px;
+    flex-wrap: wrap;
   }
   .bottom__title {
     margin-bottom: 8px;
   }
 }
-@media only screen 
-and (min-device-width : 414px) 
-and (max-device-width : 736px) { 
+@media screen and (max-width: 414px) {
+  .weather__info {
+    flex-wrap: wrap;
+  }
+}
+@media only screen and (min-device-width: 414px) and (max-device-width: 736px) {
   .top__header {
     height: 23vh;
   }

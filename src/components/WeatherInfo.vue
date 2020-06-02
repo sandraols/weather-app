@@ -1,6 +1,6 @@
 <template>
   <div class="weather-info-container">
-    <p class="text">{{time | subStr}}</p>
+    <p class="text time">{{time | subStr}}</p>
     <img class="icon" v-bind:src="`http://openweathermap.org/img/wn/` + icon + `@2x.png`">
     <p class="text">{{Math.round(temperature)}}˚C</p>
   </div>
@@ -36,7 +36,18 @@ export default {
   color: #3f3f3f;
   font-size: 14px;
 }
+.time {
+    font-weight: 700;
+}
 .icon {
   max-width: 60px;
+}
+@media screen and (max-width: 414px) {
+  .weather-info-container {
+    width: fit-content;
+  }
+  .time {
+    margin-top: 24px;
+  }
 }
 </style>
