@@ -47,7 +47,8 @@ export default {
   height: 40vh;
 }
 .main__title {
-  font-family: "Rubik", sans-serif;
+  font-family: 'Varela Round', cursive;
+  font-weight: 400;
   font-size: 78px;
   color: white;
   text-transform: uppercase;
